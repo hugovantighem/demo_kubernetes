@@ -17,3 +17,11 @@ spec:
         image: leyougue/demo:1.0.1
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - mountPath: /data
+          name: test-volume
+      volumes:
+      - name: test-volume
+        hostPath:
+          # directory location on host
+          path: /tmp/data
