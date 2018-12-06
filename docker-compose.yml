@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  server:
+    build: .
+    image: leyougue/demo:1.0.3
+    environment:
+      DATABASE_URL: postgres://test:test@db:5432/demo
+    ports:
+      - 8081:8080
+  db:
+    image: postgres:10.6-alpine
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: demo
+    ports:
+      - 5432
