@@ -14,14 +14,17 @@ spec:
     spec:
       containers:
       - name: server
-        image: leyougue/demo:1.0.1
+        image: leyougue/demo:1.0.3
+        env:
+        - name: DATABASE_URL
+          value: postgres://test:test@db-service:5432/demo
         ports:
         - containerPort: 8080
         volumeMounts:
         - mountPath: /data
-          name: test-volume
+          name: app-volume
       volumes:
-      - name: test-volume
+      - name: app-volume
         hostPath:
           # directory location on host
-          path: /tmp/data
+          path: /tmp/app-data
