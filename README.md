@@ -21,10 +21,11 @@ Publish image to repo
 docker push leyougue/demo:1.0.1
 ```
 
-
+Test application endpoints
 ```
 docker-compose up
-curl -X POST -d 'name=test' localhost:8080/item
+curl localhost:8080
+curl -d 'name=test' localhost:8080/item
 ```
 
 Run image using kubernetes
