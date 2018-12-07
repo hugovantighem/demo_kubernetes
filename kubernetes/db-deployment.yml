@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: db
+  template:
+    metadata:
+      labels:
+        run: db
+    spec:
+      containers:
+      - name: db
+        image: postgres:10.6-alpine
+        env:
+        - name: POSTGRES_USER
+          value: test
+        - name: POSTGRES_PASSWORD
+          value: test
+        - name: POSTGRES_DB
+          value: demo
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: db-volume
+      volumes:
+      - name: db-volume
+        hostPath:
+          # directory location on host
+          path: /tmp/db-data

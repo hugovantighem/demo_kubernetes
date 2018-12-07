@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: db-service
+spec:
+  selector:
+    run: db
+  ports:
+  - protocol: TCP
+    port: 5432
+  type: NodePort
