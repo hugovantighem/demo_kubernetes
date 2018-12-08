@@ -40,11 +40,18 @@ app.get('/ready', (req, res) => {
   res.send('OK');
 });
 
+var ERROR_VAR = 0;
 app.post('/item', (req, res) => {
   console.log(req.body);
   const results = [];
   client.query('INSERT INTO items(name) values($1)',
-    [req.body.name]);
+     [req.body.name]
+  );
+  // wrong code here
+  ERROR_VAR++;
+  if (ERROR_VAR % 3 === 0 ){
+    return res.status(500).json({'status': 'error'})
+  }
   const query = client.query('SELECT name FROM items');
     // Stream results back one row at a time
     query.on('row', (row) => {
