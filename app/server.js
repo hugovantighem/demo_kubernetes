@@ -35,6 +35,11 @@ app.get('/', (req, res) => {
   res.send(content);
 });
 
+app.get('/ready', (req, res) => {
+  console.log('ready');
+  res.send('OK');
+});
+
 app.post('/item', (req, res) => {
   console.log(req.body);
   const results = [];
