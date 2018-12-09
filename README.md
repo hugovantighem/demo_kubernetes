@@ -65,3 +65,16 @@ Wed Dec 05 2018 22:23:40 GMT+0000 (UTC)
 Wed Dec 05 2018 22:25:34 GMT+0000 (UTC)
 ```
 
+```
+ab -n 10 localhost:30155/
+```
+
+
+
+Deploying the dash board
+
+```
+kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+```
+http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+
