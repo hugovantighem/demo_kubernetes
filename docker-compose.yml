@@ -3,7 +3,7 @@ version: '3'
 services:
   server:
     build: .
-    image: leyougue/demo:1.0.3
+    image: leyougue/demo:1.0.4
     environment:
       DATABASE_URL: postgres://test:test@db:5432/demo
     ports:
