@@ -69,7 +69,12 @@ Wed Dec 05 2018 22:25:34 GMT+0000 (UTC)
 ab -n 10 localhost:30155/
 ```
 
-
+```
+kubectl apply -f kubernetes/server-hpa.yml       
+kubectl get hpa
+NAME         REFERENCE           TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+server-hpa   Deployment/server   <unknown>/10%   1         5         1          2m
+```
 
 Deploying the dash board
 

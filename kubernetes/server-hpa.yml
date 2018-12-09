@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+  name: server-hpa  
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1
+    kind: Deployment
+    name: server
+  targetCPUUtilizationPercentage: 1

@@ -39,7 +39,13 @@ app.get('/ready', (req, res) => {
   console.log('ready');
   res.send('OK');
 });
-
+app.get('/compute', (req, res) => {
+  var cpt = 0;
+  for (var i = 0; i < 1000000 ; i++){
+    cpt += Math.sqrt(i);
+  }
+  res.send('OK ' + cpt);
+});
 app.post('/item', (req, res) => {
   console.log(req.body);
   const results = [];
