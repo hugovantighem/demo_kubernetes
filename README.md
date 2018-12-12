@@ -78,3 +78,28 @@ kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/
 ```
 http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
+
+
+## Secrets
+
+```
+openssl enc -aes-256-cbc -in secret/file.secret -out secret/file.dac
+openssl enc -aes-256-cbc -d -in secret/file.dac
+
+kubectl create configmap my-config --from-literal=username=$(openssl enc -aes-256-cbc -d -in secrets/file.dac)
+enter aes-256-cbc decryption password:
+configmap/my-config created
+kubectl describe configmaps my-config                                                                         
+Name:         my-config
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+username:
+----
+test
+Events:  <none>
+
+```
