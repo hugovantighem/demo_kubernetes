@@ -30,9 +30,15 @@ spec:
         - name: DATABASE_URL
           value: postgres://test:test@db-service:5432/demo
         - name: USERNAME
-          value: admin
+          valueFrom:
+            secretKeyRef:
+              name: credential-secrets
+              key: username
         - name: PASSWORD
-          value: admin
+          valueFrom:
+            secretKeyRef:
+              name: credential-secrets
+              key: password
         ports:
         - containerPort: 8080
         volumeMounts:

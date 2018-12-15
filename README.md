@@ -83,8 +83,68 @@ http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-da
 ## Secrets
 
 ```
-openssl enc -aes-256-cbc -in secret/file.secret -out secret/file.dac
-openssl enc -aes-256-cbc -d -in secret/file.dac
+echo -n 'kubernetes' | base64
+a3ViZXJuZXRlcw==
+echo -n 's3cr3t' | base64
+czNjcjN0
+
+kubectl create -f kubernetes/credential-secrets.yml
+
+kubectl describe secret credential-secrets
+Name:         credential-secrets
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Type:  Opaque
+
+Data
+====
+password:  6 bytes
+username:  10 bytes
+```
+
+```
+kubectl apply -f kubernetes/server-deployment.yml
+deployment.apps/server configured
+
+curl localhost:30155/secrets
+{"username":"kubernetes","password":"s3cr3t"}
+```
+WARNINGS : 
+- the values `a3ViZXJuZXRlcw==` and `czNjcjN0` in `credential-secrets.yml` are encoded not encrypted
+- storing credential (like `credential-secrets.yml`) as plain text (not encrypted) in a repository, is not a good practice.
+
+SOLUTIONS :
+- use a file or a command line on the host that is only local
+- push the files or credentials to a repository, but ensure they are encrypted with a passphrase, and then decrypt directly on host
+
+```
+# create files with plain text
+cat secrets/admin.secret
+administrator
+cat secrets/password.secret
+admin_password
+
+# encrypt these files
+openssl enc -aes-256-cbc -in secrets/admin.secret -out secrets/admin.dac
+openssl enc -aes-256-cbc -in secrets/password.secret -out secrets/password.dac
+
+# secrets/admin.dac and secrets/password.dac can be stored in a repository
+
+kubectl create secret generic credential-secrets \
+ --from-literal=username=$(openssl enc -aes-256-cbc -d -in secrets/admin.dac -pass pass:password) \
+ --from-literal=password=$(openssl enc -aes-256-cbc -d -in secrets/password.dac -pass pass:password)
+
+kubectl apply -f kubernetes/server-deployment.yml
+curl localhost:30155/secrets
+{"username":"administrator","password":"admin_password"}
+```
+
+
+```
+openssl enc -aes-256-cbc -in secrets/file.secret -out secrets/file.dac
+openssl enc -aes-256-cbc -d -in secrets/file.dac
 
 kubectl create configmap my-config --from-literal=username=$(openssl enc -aes-256-cbc -d -in secrets/file.dac)
 enter aes-256-cbc decryption password:
@@ -102,4 +162,16 @@ username:
 test
 Events:  <none>
 
+```
+
+```
+openssl enc -aes-256-cbc -in secrets/password.secret -out secrets/password.dac
+enter aes-256-cbc encryption password: password
+```
+
+`secrets/password.dac` can be decrypted using `decrypt_password.dac.sh`
+
+```
+sh ./decrypt_password.dac.sh
+password
 ```
