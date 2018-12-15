@@ -1,0 +1,10 @@
+version: "3"
+services:
+  nginx:
+    build: .
+    image: leyougue/secu:v1
+    ports:
+      - "8080:80"
+      - "2222:22"
+
+

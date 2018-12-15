@@ -128,8 +128,20 @@ admin_password
 
 # encrypt these files
 openssl enc -aes-256-cbc -in secrets/admin.secret -out secrets/admin.dac
+enter aes-256-cbc encryption password: password
 openssl enc -aes-256-cbc -in secrets/password.secret -out secrets/password.dac
+enter aes-256-cbc encryption password: password
+```
 
+INFO:
+`secrets/password.dac` can be decrypted using `decrypt_password.dac.sh`
+
+```
+sh ./decrypt_password.dac.sh
+admin_password
+```
+
+```
 # secrets/admin.dac and secrets/password.dac can be stored in a repository
 
 kubectl create secret generic credential-secrets \
@@ -141,37 +153,22 @@ curl localhost:30155/secrets
 {"username":"administrator","password":"admin_password"}
 ```
 
+INFO:
+- `create_credential-secrets.sh` recreate secrets from `.dac` files
+- deployment can now be automated running this script from ssh command `ssh user@host /bin/sh /path/to/create_credential-secrets.sh`
+- as `create_credential-secrets.sh` contains the passphrase in plain text and must not be stored in the repository, it can be a good idea to restrict access to this file to a `privileged_user`, who will be the only one able to decrypt `.dac` files
+- `create_credential-secrets.sh` is juste a convenient way to create kubernetes secrets using command thru ssh
 
-```
-openssl enc -aes-256-cbc -in secrets/file.secret -out secrets/file.dac
-openssl enc -aes-256-cbc -d -in secrets/file.dac
+# Securize file
 
-kubectl create configmap my-config --from-literal=username=$(openssl enc -aes-256-cbc -d -in secrets/file.dac)
-enter aes-256-cbc decryption password:
-configmap/my-config created
-kubectl describe configmaps my-config                                                                         
-Name:         my-config
-Namespace:    default
-Labels:       <none>
-Annotations:  <none>
+Passwords don't need to be placed in a repository, but if it's that you want for some reason, you can push encrypted versions.
 
-Data
-====
-username:
-----
-test
-Events:  <none>
+The easiest way is to create a dedicated user like `privileged_user` to encrypt and decrypt files.
 
-```
+In oder to create kubernetes secrets, `privileged_user` will be able to run kubectl too.
 
-```
-openssl enc -aes-256-cbc -in secrets/password.secret -out secrets/password.dac
-enter aes-256-cbc encryption password: password
-```
-
-`secrets/password.dac` can be decrypted using `decrypt_password.dac.sh`
-
-```
-sh ./decrypt_password.dac.sh
-password
-```
+- This user can clone the repository (same as source, or a dedicated one for secrets). A dedicated one is recommended
+- create files like admin.secret and password.secret (in case this files are located in the repo tree, do not forget to add `.sercret` to `.gitignore` file)
+- encrypt files using `openssl enc -aes-256-cbc -in secrets/file.secret -out secrets/file.dac` and typing the password
+- push `.dac` files to the remote
+- chen you need to deploy new credentials, `privileged_user` will be used to delete previous kubernetes secrets and create new ones (with same name) using `ssh privileged_user@host /bin/sh /path/to/create_credential-secrets.sh`
