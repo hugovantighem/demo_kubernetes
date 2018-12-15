@@ -40,6 +40,14 @@ app.get('/ready', (req, res) => {
   res.send('OK');
 });
 
+app.get('/secrets', (req, res) => {
+  var secrets = {
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD
+  };
+  res.json(secrets);
+});
+
 app.post('/item', (req, res) => {
   console.log(req.body);
   const results = [];

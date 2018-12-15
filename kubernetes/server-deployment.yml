@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: leyougue/demo:1.0.4
+        image: leyougue/demo:1.0.5
         resources:
           limits:
             memory: "128Mi"
@@ -29,6 +29,10 @@ spec:
         env:
         - name: DATABASE_URL
           value: postgres://test:test@db-service:5432/demo
+        - name: USERNAME
+          value: admin
+        - name: PASSWORD
+          value: admin
         ports:
         - containerPort: 8080
         volumeMounts:
